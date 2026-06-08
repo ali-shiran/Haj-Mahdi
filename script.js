@@ -1,7 +1,3 @@
-/* ============================================================
-   Nirvana Massage | script.js
-   ============================================================ */
-
 document.addEventListener("DOMContentLoaded", function () {
   var toggle = document.getElementById("themeToggle");
   var phoneBtn = document.getElementById("phoneBtn");
@@ -15,15 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* ===== ۱. مدیریت هوشمند دکمه تماس تلفنی ===== */
-  phoneBtn.addEventListener("click", function () {
-    if (isMobileDevice()) {
-      // در موبایل: مستقیم تماس می‌گیرد
-      window.location.href = "tel:" + phoneNumber;
-    } else {
-      // در دسکتاپ: شماره را کپی می‌کند و پیام مناسب نشان می‌دهد
-      copyToClipboard(phoneNumber, "شماره تلفن مطب کپی شد: " + phoneNumber);
-    }
-  });
+  if (phoneBtn) {
+    phoneBtn.addEventListener("click", function () {
+      if (isMobileDevice()) {
+        // در موبایل: مستقیم تماس می‌گیرد
+        window.location.href = "tel:" + phoneNumber;
+      } else {
+        // در دسکتاپ: شماره را کپی می‌کند و پیام مناسب نشان می‌دهد
+        copyToClipboard(phoneNumber, "شماره تلفن مطب کپی شد: " + phoneNumber);
+      }
+    });
+  }
 
   /* ===== ۲. مدیریت هوشمند دکمه پیامک ===== */
   if (smsBtn) {
@@ -61,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* ===== نمایش افکت توست (Toast) ===== */
   function showToast(message) {
+    if (!toast) return;
     toast.textContent = message;
     toast.classList.add("show");
     setTimeout(function () {
@@ -77,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function applyTheme(theme) {
+    if (!toggle) return;
     if (theme === "dark") {
       document.body.classList.add("dark");
       toggle.textContent = "☀️";
@@ -94,13 +94,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return getSystemTheme();
   }
 
+  // اعمال فوری تم بر اساس حافظه مرورگر یا سیستم کاربر
   applyTheme(getCurrentTheme());
 
-  toggle.addEventListener("click", function () {
-    var newTheme = document.body.classList.contains("dark") ? "light" : "dark";
-    applyTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  });
+  if (toggle) {
+    toggle.addEventListener("click", function () {
+      var newTheme = document.body.classList.contains("dark") ? "light" : "dark";
+      applyTheme(newTheme);
+      localStorage.setItem("theme", newTheme);
+    });
+  }
 
   if (window.matchMedia) {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
