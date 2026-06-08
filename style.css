@@ -1,3 +1,4 @@
+/* ===== تنظیمات عمومی و ریست ===== */
 * {
   box-sizing: border-box;
 }
@@ -14,39 +15,43 @@
   font-weight: 700;
 }
 
-/* ===== پالت های رنگی متمایز و لوکس ===== */
+/* ===== بخش پالت‌های رنگی قابل سوئیچ ===== */
 :root {
-  /* پالت فعلی: Slate Blue & Linen (آبی سنگی و کتان) */
-  --primary: #607D8B;
-  --primary-hover: #455A64;
-  --primary-active: #37474F;
-  --bg-1: #F4F6F6;
-  --bg-2: #E5ECEE;
-  --text-main: #263238;
-  --text-sub: #546E7A;
-  --logo-border: #607D8B;
+  /* ========================================================
+     راهنما: برای تغییر پالت، علامت کامنت (*/ /*) را جابه‌جا کنید.
+     در حال حاضر پالت دوم فعال است و بقیه کامنت (غیرفعال) هستند.
+     ======================================================== */
 
-  /* برای تست پالت های دیگر، کدهای زیر را با مقادیر بالا جایگزین کن:
-  
-     [پالت اول: سبز مریم گلی و سنگ گرم]
-     --primary: #7D9D82;
-     --primary-hover: #5F7D64;
-     --primary-active: #475E4B;
-     --bg-1: #FAF8F5;
-     --bg-2: #EFECE8;
-     --text-main: #2F3E32;
-     --text-sub: #5B6F5F;
-     --logo-border: #7D9D82;
+  /* [پالت دوم: فعال] آبی اسلیتی و کتان (Slate Blue & Linen) */
+  --primary: #455A64;
+  --primary-hover: #37474F;
+  --primary-active: #263238;
+  --bg-1: #FFFFFF;
+  --bg-2: #F0F4F6;
+  --text-main: #1C2529;
+  --text-sub: #455A64;
+  --logo-border: #455A64;
 
-     [پالت سوم: سبز جنگلی و طلایی مات]
-     --primary: #C5A880;
-     --primary-hover: #A88D65;
-     --primary-active: #8C7351;
-     --bg-1: #1C3322;
-     --bg-2: #122216;
-     --text-main: #F9F9F9;
-     --text-sub: #C5A880;
-     --logo-border: #C5A880;
+  /* [پالت اول: غیرفعال] سبز مریم گلی و سنگ گرم (Sage & Warm Stone)
+  --primary: #7D9D82;
+  --primary-hover: #5F7D64;
+  --primary-active: #475E4B;
+  --bg-1: #FAF8F5;
+  --bg-2: #EFECE8;
+  --text-main: #2F3E32;
+  --text-sub: #5B6F5F;
+  --logo-border: #7D9D82;
+  */
+
+  /* [پالت سوم: غیرفعال] سبز جنگلی و طلایی مات (Forest Gold)
+  --primary: #C5A880;
+  --primary-hover: #A88D65;
+  --primary-active: #8C7351;
+  --bg-1: #1C3322;
+  --bg-2: #122216;
+  --text-main: #F9F9F9;
+  --text-sub: #C5A880;
+  --logo-border: #C5A880;
   */
 
   /* رنگ های تم تاریک ثابت (Night Spa) */
@@ -55,10 +60,7 @@
   --dark-3: #070c12;
 }
 
-* {
-  box-sizing: border-box;
-}
-
+/* ===== استایل‌های بدنه و ساختار صفحه ===== */
 body {
   margin: 0;
   background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
@@ -142,7 +144,7 @@ h1 {
   color: var(--text-sub);
   margin-bottom: 0.5rem;
   font-weight: 400;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* استایل عمومی دکمه ها */
@@ -189,15 +191,15 @@ h1 {
 
 /* دکمه های ثانویه (بله و پیامک) */
 .secondary-btn {
-  background: white;
+  background: #FFFFFF;
   color: var(--text-main);
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .secondary-btn:hover {
-  background: var(--bg-1);
-  border-color: rgba(0, 0, 0, 0.15);
+  background: var(--bg-2);
+  border-color: rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
 }
 
@@ -252,9 +254,9 @@ h1 {
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   color: white;
-  padding: 10px 24px;
+  padding: 12px 24px;
   border-radius: 30px;
   font-size: 0.95rem;
   z-index: 2000;
@@ -262,6 +264,7 @@ h1 {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
   pointer-events: none;
   direction: rtl;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .toast.show {
