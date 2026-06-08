@@ -1,115 +1,120 @@
-document.addEventListener("DOMContentLoaded", function () {
-  var toggle = document.getElementById("themeToggle");
-  var phoneBtn = document.getElementById("phoneBtn");
-  var smsBtn = document.getElementById("smsBtn");
-  var toast = document.getElementById("toast");
-  var phoneNumber = "09140445812";
+// مطمئن شدن از بارگذاری کامل ساختار DOM قبل از اجرای کدهای جاوااسکریپت
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // ۱. انتخاب المان‌های مورد نیاز با اعتبارسنجی ساده (Null Safety)
+  const themeToggle = document.getElementById("themeToggle");
+  const smsBtn = document.getElementById("smsBtn");
+  const shareBtn = document.getElementById("shareBtn");
+  const toast = document.getElementById("toast");
+  const body = document.body;
 
-  // تابع کمکی برای تشخیص موبایل بودن ابزار کاربر
-  function isMobileDevice() {
-    return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  }
+  // شماره تماس مجموعه جهت استفاده در بخش کپی پیامک
+  const phoneNumber = "09131234567"; 
 
-  /* ===== ۱. مدیریت هوشمند دکمه تماس تلفنی ===== */
-  if (phoneBtn) {
-    phoneBtn.addEventListener("click", function () {
-      if (isMobileDevice()) {
-        // در موبایل: مستقیم تماس می‌گیرد
-        window.location.href = "tel:" + phoneNumber;
-      } else {
-        // در دسکتاپ: شماره را کپی می‌کند و پیام مناسب نشان می‌دهد
-        copyToClipboard(phoneNumber, "شماره تلفن مطب کپی شد: " + phoneNumber);
-      }
+  // ۲. مدیریت تغییر تم (تاریک / روشن)
+  if (themeToggle) {
+    // خواندن تم ذخیره شده از مراجعات قبلی کاربر
+    const savedTheme = localStorage.getItem("theme");
+    // تشخیص تم پیش‌فرض سیستم‌عامل کاربر
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    // اعمال تم بر اساس حافظه یا سیستم‌عامل
+    if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
+      body.classList.add("dark");
+      themeToggle.textContent = "☀️";
+    } else {
+      body.classList.remove("dark");
+      themeToggle.textContent = "🌙";
+    }
+
+    // عملکرد دکمه تعویض دستی تم
+    themeToggle.addEventListener("click", () => {
+      body.classList.toggle("dark");
+      const isDark = body.classList.contains("dark");
+      
+      // تغییر اموجی دکمه متناسب با تم جدید
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
+      // ذخیره دائمی انتخاب کاربر در مرورگر
+      localStorage.setItem("theme", isDark ? "dark" : "light");
     });
   }
 
-  /* ===== ۲. مدیریت هوشمند دکمه پیامک ===== */
+  // ۳. مدیریت کلیک روی دکمه پیامک (کپی کردن شماره)
   if (smsBtn) {
-    smsBtn.addEventListener("click", function () {
-      var messageText = "سلام. وقت بخیر. درخواست دریافت آدرس و هماهنگی نوبت دارم.";
-      if (isMobileDevice()) {
-        window.location.href = "sms:" + phoneNumber + "?body=" + encodeURIComponent(messageText);
+    smsBtn.addEventListener("click", () => {
+      // استفاده از ویژگی استاندارد ناوبری مرورگرها برای مدیریت کلیپ‌بورد
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(phoneNumber)
+          .then(() => showToast("شماره کپی شد! می‌توانید آن را پیامک کنید."))
+          .catch(err => {
+            console.error("خطا در کپی خودکار شماره: ", err);
+            fallbackCopyText(phoneNumber);
+          });
+      } else {
+        // روش جایگزین برای مرورگرهای قدیمی فاقد Clipboard API
+        fallbackCopyText(phoneNumber);
       }
     });
   }
 
-  /* ===== تابع کپی در کلیپ‌بورد ===== */
-  function copyToClipboard(text, successMessage) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        showToast(successMessage);
-      }).catch(function () {
-        showToast("کپی نشد! شماره مطب: " + text);
-      });
-    } else {
-      // راه حل جایگزین برای مرورگرهای قدیمی
-      var tempInput = document.createElement("input");
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand("copy");
-        showToast(successMessage);
-      } catch (err) {
-        showToast("شماره مطب: " + text);
-      }
-      document.body.removeChild(tempInput);
+  // روش قدیمی کپی (Fallback) در صورت پشتیبانی نکردن مرورگر از متدهای جدید
+  function fallbackCopyText(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; // خارج کردن المان از دید مستقیم کاربر
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      showToast("شماره کپی شد! می‌توانید آن را پیامک کنید.");
+    } catch (err) {
+      console.error("امکان کپی شماره وجود ندارد.", err);
     }
+    document.body.removeChild(textArea);
   }
 
-  /* ===== نمایش افکت توست (Toast) ===== */
+  // ۴. مدیریت سیستم اشتراک‌گذاری پیش‌فرض موبایل (Web Share API)
+  if (shareBtn) {
+    shareBtn.addEventListener("click", () => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'نیروانا ماساژ',
+          text: 'کارت ویزیت دیجیتال نیروانا ماساژ - بازیابی سلامت جسمانی شما',
+          url: window.location.href
+        })
+        .then(() => console.log('اشتراک‌گذاری موفقیت‌آمیز بود.'))
+        .catch((error) => console.log('خطا یا انصراف از اشتراک‌گذاری:', error));
+      } else {
+        // اگر مرورگر دسکتاپ بود یا از Share API پشتیبانی نمی‌کرد، آدرس سایت را کپی می‌کنیم
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(window.location.href)
+            .then(() => showToast("لینک کارت ویزیت در حافظه کپی شد!"))
+            .catch(err => console.error(err));
+        }
+      }
+    });
+  }
+
+  // نمایش باکس شناور پیام تایید (Toast) با متن دلخواه
   function showToast(message) {
-    if (!toast) return;
-    toast.textContent = message;
-    toast.classList.add("show");
-    setTimeout(function () {
-      toast.classList.remove("show");
-    }, 3000); // زمان نمایش مناسب برای خواندن شماره کپی‌شده
-  }
-
-  /* ===== ۳. مدیریت بدون باگ تم فعال ===== */
-  function getSystemTheme() {
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
-  }
-
-  function applyTheme(theme) {
-    if (!toggle) return;
-    if (theme === "dark") {
-      document.body.classList.add("dark");
-      toggle.textContent = "☀️";
-    } else {
-      document.body.classList.remove("dark");
-      toggle.textContent = "🌙";
+    if (toast) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
     }
   }
+});
 
-  function getCurrentTheme() {
-    var saved = localStorage.getItem("theme");
-    if (saved === "dark" || saved === "light") {
-      return saved;
-    }
-    return getSystemTheme();
-  }
-
-  // اعمال فوری تم بر اساس حافظه مرورگر یا سیستم کاربر
-  applyTheme(getCurrentTheme());
-
-  if (toggle) {
-    toggle.addEventListener("click", function () {
-      var newTheme = document.body.classList.contains("dark") ? "light" : "dark";
-      applyTheme(newTheme);
-      localStorage.setItem("theme", newTheme);
-    });
-  }
-
-  if (window.matchMedia) {
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
-      if (!localStorage.getItem("theme")) {
-        applyTheme(e.matches ? "dark" : "light");
-      }
-    });
+// ۵. مدیریت محو شدن لودینگ پس از بارگذاری کامل صفحه
+window.addEventListener("load", () => {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    // ایجاد تاخیر کوتاه ۷۰۰ میلی‌ثانیه‌ای جهت کامل شدن انیمیشن زیبای لوگو
+    setTimeout(() => {
+      loader.classList.add("loader-hidden");
+    }, 700);
   }
 });
