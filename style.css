@@ -1,0 +1,318 @@
+* {
+  box-sizing: border-box;
+}
+
+/* ===== فونت های لوکال ===== */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("./fonts/Vazirmatn-Regular.ttf");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("./fonts/Vazirmatn-Bold.ttf");
+  font-weight: 700;
+}
+
+/* ===== پالت های رنگی متمایز و لوکس ===== */
+:root {
+  /* پالت فعلی: Slate Blue & Linen (آبی سنگی و کتان) */
+  --primary: #607D8B;
+  --primary-hover: #455A64;
+  --primary-active: #37474F;
+  --bg-1: #F4F6F6;
+  --bg-2: #E5ECEE;
+  --text-main: #263238;
+  --text-sub: #546E7A;
+  --logo-border: #607D8B;
+
+  /* برای تست پالت های دیگر، کدهای زیر را با مقادیر بالا جایگزین کن:
+  
+     [پالت اول: سبز مریم گلی و سنگ گرم]
+     --primary: #7D9D82;
+     --primary-hover: #5F7D64;
+     --primary-active: #475E4B;
+     --bg-1: #FAF8F5;
+     --bg-2: #EFECE8;
+     --text-main: #2F3E32;
+     --text-sub: #5B6F5F;
+     --logo-border: #7D9D82;
+
+     [پالت سوم: سبز جنگلی و طلایی مات]
+     --primary: #C5A880;
+     --primary-hover: #A88D65;
+     --primary-active: #8C7351;
+     --bg-1: #1C3322;
+     --bg-2: #122216;
+     --text-main: #F9F9F9;
+     --text-sub: #C5A880;
+     --logo-border: #C5A880;
+  */
+
+  /* رنگ های تم تاریک ثابت (Night Spa) */
+  --dark-1: #0f1720;
+  --dark-2: #0b1218;
+  --dark-3: #070c12;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  color: var(--text-main);
+  text-align: center;
+  font-family: "Vazirmatn", sans-serif;
+  overflow-x: hidden;
+  transition: background 0.45s ease, color 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ===== لایه نور آرام‌بخش پس‌زمینه ===== */
+.ambient-light {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(circle at 30% 30%, rgba(96, 125, 139, 0.12), rgba(0,0,0,0));
+  animation: ambientMove 25s ease-in-out infinite alternate;
+}
+
+@keyframes ambientMove {
+  0% { transform: translate(0%, 0%) scale(1); }
+  100% { transform: translate(10%, 8%) scale(1.1); }
+}
+
+/* ===== لوگو و هیرو اصلی ===== */
+.hero {
+  padding: 3rem 1.5rem 1.5rem;
+  max-width: 450px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.logo {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.5rem;
+  display: block;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--logo-border);
+  padding: 6px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-sub);
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ===== بخش دکمه‌ها ===== */
+.actions {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.hint-text {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* استایل عمومی دکمه ها */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.95rem;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+
+/* آیکون های داخل دکمه */
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+/* دکمه اصلی (تماس) */
+.primary-btn {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 8px 20px rgba(96, 125, 139, 0.25);
+}
+
+.primary-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.primary-btn:active {
+  background: var(--primary-active);
+  transform: translateY(0) scale(0.98);
+}
+
+/* دکمه های ثانویه (بله و پیامک) */
+.secondary-btn {
+  background: white;
+  color: var(--text-main);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.secondary-btn:hover {
+  background: var(--bg-1);
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.secondary-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* دکمه غیرفعال وب‌سایت */
+.disabled-btn {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text-sub);
+  opacity: 0.5;
+  cursor: not-allowed;
+  border: 1.5px dashed rgba(0, 0, 0, 0.1);
+}
+
+/* مخفی کردن دکمه پیامک در صفحه نمایش‌های بزرگتر از موبایل */
+@media (min-width: 768px) {
+  #smsBtn {
+    display: none !important;
+  }
+}
+
+/* ===== سیستم دکمه تم و توست ===== */
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  background: white;
+}
+
+/* توست ناتیفیکیشن */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  z-index: 2000;
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  pointer-events: none;
+  direction: rtl;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ===== تم تاریک (Dark Mode) ===== */
+body.dark {
+  background: linear-gradient(180deg, var(--dark-1), var(--dark-2), var(--dark-3));
+  color: #f3f4f6;
+}
+
+body.dark .ambient-light {
+  background: radial-gradient(circle at 40% 40%, rgba(96, 125, 139, 0.15), rgba(0,0,0,0));
+}
+
+body.dark h1 { color: #f9fafb; }
+body.dark .subtitle { color: #9ca3af; }
+body.dark .hint-text { color: #9ca3af; }
+
+body.dark .logo {
+  border-color: #4b5563;
+  background: var(--dark-2);
+}
+
+body.dark .secondary-btn {
+  background: rgba(255, 255, 255, 0.03);
+  color: #e5e7eb;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .theme-toggle {
+  background: rgba(15, 23, 32, 0.8);
+  color: #f9fafb;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark .disabled-btn {
+  background: rgba(255, 255, 255, 0.01);
+  color: #6b7280;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== فوتر ===== */
+footer {
+  padding: 2rem 1.5rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
