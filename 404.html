@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحه پیدا نشد | نیروانا</title>
+  <style>
+    /* ریست و فونت */
+    @font-face {
+      font-family: "Vazirmatn";
+      src: url("./fonts/Vazirmatn-Regular.ttf");
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: linear-gradient(180deg, #FFFFFF, #F0F4F6);
+      color: #1C2529;
+      font-family: "Vazirmatn", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 450px;
+      width: 100%;
+    }
+
+    .error-code {
+      font-size: 6rem;
+      font-weight: 900;
+      color: #455A64;
+      line-height: 1;
+      margin-bottom: 10px;
+      letter-spacing: -2px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #1C2529;
+    }
+
+    p {
+      color: #455A64;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 2rem;
+      background: #455A64;
+      color: white;
+      text-decoration: none;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 8px 20px rgba(96, 125, 139, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    .btn-home:hover {
+      background: #37474F;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="error-code">۴۰۴</div>
+    <h1>صفحه مورد نظر پیدا نشد!</h1>
+    <p>آدرسی که وارد کرده‌اید اشتباه است یا این صفحه ممکن است حذف شده باشد.</p>
+    <a href="./" class="btn-home">بازگشت به صفحه اصلی</a>
+  </div>
+
+</body>
+</html>
