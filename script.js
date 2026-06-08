@@ -4,21 +4,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // ۱. انتخاب المان‌های مورد نیاز با اعتبارسنجی ساده (Null Safety)
   const themeToggle = document.getElementById("themeToggle");
   const smsBtn = document.getElementById("smsBtn");
+  const baleBtn = document.getElementById("baleBtn"); // دکمه بله
+  const saveContactBtn = document.getElementById("saveContactBtn"); // دکمه ذخیره مخاطب/کارت ویزیت
   const shareBtn = document.getElementById("shareBtn");
   const toast = document.getElementById("toast");
   const body = document.body;
 
-  // شماره تماس مجموعه جهت استفاده در بخش کپی پیامک
-  const phoneNumber = "09131234567"; 
+  // اطلاعات تماس و پیام پیش‌فرض اختصاصی
+  const phoneNumber = "09140445812"; // شماره تماس مجموعه (در صورت نیاز این شماره را تغییر دهید)
+  const messageText = "درود\nلطف کنین یک نوبت برام بزارین و آدرس رو هم برام ارسال کنین!";
 
-  // ۲. مدیریت تغییر تم (تاریک / روشن)
+  // تشخیص نوع دستگاه کاربر (موبایل یا دسکتاپ)
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // ۲. مدیریت تعداد دکمه‌ها بر اساس دستگاه (۵ دکمه در موبایل، ۴ دکمه در دسکتاپ)
+  if (!isMobile && saveContactBtn) {
+    // پنهان کردن دکمه ذخیره مخاطب در نسخه دسکتاپ برای داشتن ۴ دکمه
+    saveContactBtn.style.display = "none";
+  }
+
+  // ۳. مدیریت تغییر تم (تاریک / روشن)
   if (themeToggle) {
-    // خواندن تم ذخیره شده از مراجعات قبلی کاربر
     const savedTheme = localStorage.getItem("theme");
-    // تشخیص تم پیش‌فرض سیستم‌عامل کاربر
     const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    // اعمال تم بر اساس حافظه یا سیستم‌عامل
     if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
       body.classList.add("dark");
       themeToggle.textContent = "☀️";
@@ -27,54 +36,85 @@ document.addEventListener("DOMContentLoaded", () => {
       themeToggle.textContent = "🌙";
     }
 
-    // عملکرد دکمه تعویض دستی تم
     themeToggle.addEventListener("click", () => {
       body.classList.toggle("dark");
       const isDark = body.classList.contains("dark");
-      
-      // تغییر اموجی دکمه متناسب با تم جدید
       themeToggle.textContent = isDark ? "☀️" : "🌙";
-      // ذخیره دائمی انتخاب کاربر در مرورگر
       localStorage.setItem("theme", isDark ? "dark" : "light");
     });
   }
 
-  // ۳. مدیریت کلیک روی دکمه پیامک (کپی کردن شماره)
+  // ۴. مدیریت کلیک روی دکمه پیامک (SMS)
   if (smsBtn) {
     smsBtn.addEventListener("click", () => {
-      // استفاده از ویژگی استاندارد ناوبری مرورگرها برای مدیریت کلیپ‌بورد
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(phoneNumber)
-          .then(() => showToast("شماره کپی شد! می‌توانید آن را پیامک کنید."))
-          .catch(err => {
-            console.error("خطا در کپی خودکار شماره: ", err);
-            fallbackCopyText(phoneNumber);
-          });
+      if (isMobile) {
+        // سناریوی موبایل: ارجاع مستقیم به برنامه پیامک با متن پیش‌فرض
+        openSmsApp();
       } else {
-        // روش جایگزین برای مرورگرهای قدیمی فاقد Clipboard API
-        fallbackCopyText(phoneNumber);
+        // سناریوی دسکتاپ: کپی کردن شماره در کلیپ‌بورد برای کاربر
+        copyToClipboard(phoneNumber, "شماره تلفن در حافظه کپی شد! می‌توانید به آن پیامک دهید.");
       }
     });
   }
 
-  // روش قدیمی کپی (Fallback) در صورت پشتیبانی نکردن مرورگر از متدهای جدید
-  function fallbackCopyText(text) {
+  // ۵. مدیریت کلیک روی دکمه بله (هم دسکتاپ هم موبایل با پیام پیش‌فرض)
+  if (baleBtn) {
+    baleBtn.addEventListener("click", (e) => {
+      e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
+      const encodedText = encodeURIComponent(messageText);
+      // لینک مستقیم ارسال پیام در بله با متن پیش‌فرض
+      const baleUrl = `https://ble.ir/${phoneNumber}?text=${encodedText}`;
+      window.open(baleUrl, "_blank");
+    });
+  }
+
+  // تابع باز کردن برنامه پیامک پیش‌فرض موبایل با متن آماده
+  function openSmsApp() {
+    const encodedText = encodeURIComponent(messageText);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // فرمت‌دهی لینک پیامک بر اساس سیستم‌عامل موبایل (iOS یا اندروید)
+    const smsHref = isIOS 
+      ? `sms:${phoneNumber};&body=${encodedText}` 
+      : `sms:${phoneNumber}?body=${encodedText}`;
+
+    const tempLink = document.createElement("a");
+    tempLink.href = smsHref;
+    tempLink.click();
+  }
+
+  // تابع کمکی کپی متن در کلیپ‌بورد با پشتیبانی کامل
+  function copyToClipboard(text, successMessage) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast(successMessage))
+        .catch(err => {
+          console.error("خطا در کپی: ", err);
+          fallbackCopyText(text, successMessage);
+        });
+    } else {
+      fallbackCopyText(text, successMessage);
+    }
+  }
+
+  // روش قدیمی کپی (Fallback) برای مرورگرهای دسکتاپ قدیمی
+  function fallbackCopyText(text, successMessage) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
-    textArea.style.position = "fixed"; // خارج کردن المان از دید مستقیم کاربر
+    textArea.style.position = "fixed";
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
     try {
       document.execCommand("copy");
-      showToast("شماره کپی شد! می‌توانید آن را پیامک کنید.");
+      showToast(successMessage);
     } catch (err) {
-      console.error("امکان کپی شماره وجود ندارد.", err);
+      console.error("امکان کپی وجود ندارد.", err);
     }
     document.body.removeChild(textArea);
   }
 
-  // ۴. مدیریت سیستم اشتراک‌گذاری پیش‌فرض موبایل (Web Share API)
+  // ۶. مدیریت سیستم اشتراک‌گذاری پیش‌فرض موبایل (Web Share API)
   if (shareBtn) {
     shareBtn.addEventListener("click", () => {
       if (navigator.share) {
@@ -86,12 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(() => console.log('اشتراک‌گذاری موفقیت‌آمیز بود.'))
         .catch((error) => console.log('خطا یا انصراف از اشتراک‌گذاری:', error));
       } else {
-        // اگر مرورگر دسکتاپ بود یا از Share API پشتیبانی نمی‌کرد، آدرس سایت را کپی می‌کنیم
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(window.location.href)
-            .then(() => showToast("لینک کارت ویزیت در حافظه کپی شد!"))
-            .catch(err => console.error(err));
-        }
+        copyToClipboard(window.location.href, "لینک کارت ویزیت در حافظه کپی شد!");
       }
     });
   }
@@ -108,11 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ۵. مدیریت محو شدن لودینگ پس از بارگذاری کامل صفحه
+// ۷. مدیریت محو شدن لودینگ پس از بارگذاری کامل صفحه
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
   if (loader) {
-    // ایجاد تاخیر کوتاه ۷۰۰ میلی‌ثانیه‌ای جهت کامل شدن انیمیشن زیبای لوگو
     setTimeout(() => {
       loader.classList.add("loader-hidden");
     }, 700);
